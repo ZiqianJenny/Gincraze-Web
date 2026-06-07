@@ -11,8 +11,9 @@
 .opening-strips {
   position: relative;
   z-index: 2;
-  /* ↓ 整体位置：改这里的 padding-top 即可上下移动铜版条区域 */
-  padding: 6.25vw 3vw 2.5vw;
+  /* ↓ 整体位置：改这里的 padding-top 即可上下移动铜版条区域
+       clamp(下限, 理想vw, 上限) —— 上限封顶，宽屏上不再撑出大空隙 */
+  padding: clamp(54px, 6.25vw, 90px) 3vw clamp(22px, 2.5vw, 36px);
   margin-top: 0;
 }
 
@@ -530,7 +531,8 @@
 .opening-wig {
   position: relative;
   z-index: 2;
-  padding: 12.5vw 5vw 2.5vw;
+  /* 上下留白封顶，宽屏上不再撑大 */
+  padding: clamp(96px, 12.5vw, 180px) 5vw clamp(22px, 2.5vw, 36px);
   max-width: 920px;
   margin: 0 auto;
   text-align: center;
