@@ -345,9 +345,10 @@ function init13thInteraction() {
       textP2.style.transition = 'opacity 200ms ease'; textP2.style.opacity = '1';
 
       // 面板向右展开
-      const strip1W = wrap13.offsetWidth;
-      const panelW  = row.offsetWidth - strip1W;
-      panel.style.left   = strip1W + 'px';
+      const rowRect = row.getBoundingClientRect();
+      const sRight  = wrap13.getBoundingClientRect().right - rowRect.left;  /* 第1条右缘(相对row真实位置) */
+      const panelW  = row.offsetWidth - sRight;
+      panel.style.left   = sRight + 'px';
       panel.style.height = wrap13.offsetHeight + 'px';
       panel.style.width  = '0px';
       panel.getBoundingClientRect();
@@ -486,24 +487,25 @@ function init17thInteraction() {
       textP1.style.transition = 'opacity 200ms ease'; textP1.style.opacity = '0';
       textP2.style.transition = 'opacity 200ms ease'; textP2.style.opacity = '1';
 
-      const strip1W = allWraps[0].offsetWidth;
-      const strip2W = wrap17.offsetWidth;
       const stripH  = wrap17.offsetHeight;
       const rowW    = row.offsetWidth;
-      const G = parseFloat(getComputedStyle(row).columnGap) || 0;  /* 竖条间距(px)，补进定位 */
+      const rowRect = row.getBoundingClientRect();
+      const r17     = wrap17.getBoundingClientRect();
+      const sLeft   = r17.left  - rowRect.left;   /* 被点第2条的左缘(相对row真实位置) */
+      const sRight  = r17.right - rowRect.left;   /* 被点第2条的右缘 */
 
-      /* 点的是第2条：左面板盖第1条(含1个间距)，右面板盖第3-5条(从第3条左缘起，前面有1个间距) */
-      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - G) + 'px';
+      /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
+      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
       panelLeft.style.top = '0'; panelLeft.style.height = stripH + 'px'; panelLeft.style.width = '0px';
       panelLeft.getBoundingClientRect();
       panelLeft.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelLeft.style.width = (strip1W + G) + 'px';
+      panelLeft.style.width = sLeft + 'px';
 
-      panelRight.style.left = (strip1W + strip2W + G) + 'px'; panelRight.style.top = '0';
+      panelRight.style.left = sRight + 'px'; panelRight.style.top = '0';
       panelRight.style.height = stripH + 'px'; panelRight.style.width = '0px';
       panelRight.getBoundingClientRect();
       panelRight.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelRight.style.width = (rowW - strip1W - strip2W - G) + 'px';
+      panelRight.style.width = (rowW - sRight) + 'px';
 
       const allEls = [
         ...panelLeft.querySelectorAll('.era-panel-title, .era-panel-body p'),
@@ -639,25 +641,25 @@ function init18thInteraction() {
       textP1.style.transition = 'opacity 200ms ease'; textP1.style.opacity = '0';
       textP2.style.transition = 'opacity 200ms ease'; textP2.style.opacity = '1';
 
-      const strip1W = allWraps[0].offsetWidth;
-      const strip2W = allWraps[1].offsetWidth;
-      const strip3W = wrap18.offsetWidth;
       const stripH  = wrap18.offsetHeight;
       const rowW    = row.offsetWidth;
-      const G = parseFloat(getComputedStyle(row).columnGap) || 0;  /* 竖条间距(px)，补进定位 */
+      const rowRect = row.getBoundingClientRect();
+      const r18     = wrap18.getBoundingClientRect();
+      const sLeft   = r18.left  - rowRect.left;   /* 被点第3条的左缘(相对row真实位置) */
+      const sRight  = r18.right - rowRect.left;   /* 被点第3条的右缘 */
 
-      /* 点的是第3条：左面板盖第1-2条(含2个间距)，右面板盖第4-5条(从第4条左缘起，前面有2个间距) */
-      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - strip2W - 2*G) + 'px';
+      /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
+      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
       panelLeft.style.top = '0'; panelLeft.style.height = stripH + 'px'; panelLeft.style.width = '0px';
       panelLeft.getBoundingClientRect();
       panelLeft.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelLeft.style.width = (strip1W + strip2W + 2*G) + 'px';
+      panelLeft.style.width = sLeft + 'px';
 
-      panelRight.style.left = (strip1W + strip2W + strip3W + 2*G) + 'px'; panelRight.style.top = '0';
+      panelRight.style.left = sRight + 'px'; panelRight.style.top = '0';
       panelRight.style.height = stripH + 'px'; panelRight.style.width = '0px';
       panelRight.getBoundingClientRect();
       panelRight.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelRight.style.width = (rowW - strip1W - strip2W - strip3W - 2*G) + 'px';
+      panelRight.style.width = (rowW - sRight) + 'px';
 
       const allEls = [
         ...panelLeft.querySelectorAll('.era-panel-title, .era-panel-body p'),
@@ -793,24 +795,25 @@ function init19thInteraction() {
       textP1.style.transition = 'opacity 200ms ease'; textP1.style.opacity = '0';
       textP2.style.transition = 'opacity 200ms ease'; textP2.style.opacity = '1';
 
-      const strip1W = allWraps[0].offsetWidth;
-      const strip2W = allWraps[1].offsetWidth;
-      const strip3W = allWraps[2].offsetWidth;
-      const strip4W = wrap19.offsetWidth;
       const stripH  = wrap19.offsetHeight;
       const rowW    = row.offsetWidth;
+      const rowRect = row.getBoundingClientRect();
+      const r19     = wrap19.getBoundingClientRect();
+      const sLeft   = r19.left  - rowRect.left;   /* 被点第4条的左缘(相对row真实位置) */
+      const sRight  = r19.right - rowRect.left;   /* 被点第4条的右缘 */
 
-      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - strip2W - strip3W) + 'px';
+      /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
+      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
       panelLeft.style.top = '0'; panelLeft.style.height = stripH + 'px'; panelLeft.style.width = '0px';
       panelLeft.getBoundingClientRect();
       panelLeft.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelLeft.style.width = (strip1W + strip2W + strip3W) + 'px';
+      panelLeft.style.width = sLeft + 'px';
 
-      panelRight.style.left = (strip1W + strip2W + strip3W + strip4W) + 'px'; panelRight.style.top = '0';
+      panelRight.style.left = sRight + 'px'; panelRight.style.top = '0';
       panelRight.style.height = stripH + 'px'; panelRight.style.width = '0px';
       panelRight.getBoundingClientRect();
       panelRight.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelRight.style.width = (rowW - strip1W - strip2W - strip3W - strip4W) + 'px';
+      panelRight.style.width = (rowW - sRight) + 'px';
 
       const allEls = [
         ...panelLeft.querySelectorAll('.era-panel-title, .era-panel-body p'),
