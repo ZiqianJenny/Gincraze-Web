@@ -12,7 +12,7 @@
   position: relative;
   z-index: 2;
   /* ↓ 整体位置：改这里的 padding-top 即可上下移动铜版条区域 */
-  padding: 10vh 3vw 4vh;
+  padding: 6.25vw 3vw 2.5vw;
   margin-top: 0;
 }
 
@@ -63,7 +63,7 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: min(82vh, 820px);  /* ← 图片最大高度：改这里 */
+  max-height: min(51.25vw, 820px);  /* ← 图片最大高度：改这里 */
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;
@@ -530,7 +530,7 @@
 .opening-wig {
   position: relative;
   z-index: 2;
-  padding: 20vh 5vw 4vh;
+  padding: 12.5vw 5vw 2.5vw;
   max-width: 920px;
   margin: 0 auto;
   text-align: center;
@@ -640,7 +640,7 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: 2vh 1.5rem 12vh;
+  padding: 1.25vw 1.5rem 7.5vw;
 }
 
 .btn-enter-game {
@@ -662,7 +662,7 @@
 
 @media (max-width: 640px) {
   .opening-longpage {
-    min-height: 260vh;
+    min-height: 162.5vw;
   }
 
   .strips-row {
@@ -674,6 +674,6 @@
   }
 
   .era-strip img {
-    max-height: 48vh;
+    max-height: 30vw;
   }
 }

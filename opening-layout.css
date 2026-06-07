@@ -43,5 +43,5 @@ body:not(.mode-opening) #opening-scroll {
   background: url("assets/page1/bg-page-canvas.png") center top / 100% auto no-repeat;
   background-color: #fff;
   /* 画幅高度随底图比例，保证铜版条与 WIG 落在正确色区 */
-  min-height: 240vh;
+  min-height: 150vw;
 }
