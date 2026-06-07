@@ -22,10 +22,9 @@
   flex-direction: row;
   justify-content: center;
   align-items: flex-end;
-  /* ↓ 铜版条之间的间距：clamp(下限, 理想vw, 上限)
-       上限封顶 → 任何分辨率下都稳定，不会在 4K 上撑出巨大间距。
-       想更宽/更窄就调中间那个 vw 和上限数字 */
-  gap: clamp(10px, 1.1vw, 18px);
+  /* ↓ 必须保持 0：竖条要紧贴，点击时橙色文字块贴着竖条边缘向两侧展开。
+       一旦加间距，橙色块就会对不齐、盖到竖条上。不要改这里！ */
+  gap: 0px;
   max-width: min(40vw, 1500px);  /* ← 整行最大宽度：改这里 */
   margin: 0 auto;
   position: relative;            /* 让面板能相对此容器绝对定位 */
