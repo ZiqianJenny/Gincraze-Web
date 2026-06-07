@@ -345,8 +345,8 @@ function init13thInteraction() {
       textP2.style.transition = 'opacity 200ms ease'; textP2.style.opacity = '1';
 
       // 面板向右展开
-      const rowRect = row.getBoundingClientRect();
-      const sRight  = wrap13.getBoundingClientRect().right - rowRect.left;  /* 第1条右缘(相对row真实位置) */
+      /* 用 offsetLeft/Width（未缩放布局坐标，含间距）→ 与面板坐标系一致，舞台缩放下也准 */
+      const sRight  = wrap13.offsetLeft + wrap13.offsetWidth;  /* 第1条右缘(相对row) */
       const panelW  = row.offsetWidth - sRight;
       panel.style.left   = sRight + 'px';
       panel.style.height = wrap13.offsetHeight + 'px';
@@ -489,10 +489,9 @@ function init17thInteraction() {
 
       const stripH  = wrap17.offsetHeight;
       const rowW    = row.offsetWidth;
-      const rowRect = row.getBoundingClientRect();
-      const r17     = wrap17.getBoundingClientRect();
-      const sLeft   = r17.left  - rowRect.left;   /* 被点第2条的左缘(相对row真实位置) */
-      const sRight  = r17.right - rowRect.left;   /* 被点第2条的右缘 */
+      /* 用 offsetLeft/Width（未缩放布局坐标，含间距）→ 与面板坐标系一致，舞台缩放下也准 */
+      const sLeft   = wrap17.offsetLeft;                       /* 被点第2条的左缘(相对row) */
+      const sRight  = wrap17.offsetLeft + wrap17.offsetWidth;  /* 被点第2条的右缘 */
 
       /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
       panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
@@ -643,10 +642,9 @@ function init18thInteraction() {
 
       const stripH  = wrap18.offsetHeight;
       const rowW    = row.offsetWidth;
-      const rowRect = row.getBoundingClientRect();
-      const r18     = wrap18.getBoundingClientRect();
-      const sLeft   = r18.left  - rowRect.left;   /* 被点第3条的左缘(相对row真实位置) */
-      const sRight  = r18.right - rowRect.left;   /* 被点第3条的右缘 */
+      /* 用 offsetLeft/Width（未缩放布局坐标，含间距）→ 与面板坐标系一致，舞台缩放下也准 */
+      const sLeft   = wrap18.offsetLeft;                       /* 被点第3条的左缘(相对row) */
+      const sRight  = wrap18.offsetLeft + wrap18.offsetWidth;  /* 被点第3条的右缘 */
 
       /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
       panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
@@ -797,10 +795,9 @@ function init19thInteraction() {
 
       const stripH  = wrap19.offsetHeight;
       const rowW    = row.offsetWidth;
-      const rowRect = row.getBoundingClientRect();
-      const r19     = wrap19.getBoundingClientRect();
-      const sLeft   = r19.left  - rowRect.left;   /* 被点第4条的左缘(相对row真实位置) */
-      const sRight  = r19.right - rowRect.left;   /* 被点第4条的右缘 */
+      /* 用 offsetLeft/Width（未缩放布局坐标，含间距）→ 与面板坐标系一致，舞台缩放下也准 */
+      const sLeft   = wrap19.offsetLeft;                       /* 被点第4条的左缘(相对row) */
+      const sRight  = wrap19.offsetLeft + wrap19.offsetWidth;  /* 被点第4条的右缘 */
 
       /* 左右面板严丝合缝贴在被点竖条的左右长边（用真实位置，不留白不多盖） */
       panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - sLeft) + 'px';
