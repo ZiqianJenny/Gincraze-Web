@@ -22,9 +22,9 @@
   flex-direction: row;
   justify-content: center;
   align-items: flex-end;
-  /* ↓ 必须保持 0：竖条要紧贴，点击时橙色文字块贴着竖条边缘向两侧展开。
-       一旦加间距，橙色块就会对不齐、盖到竖条上。不要改这里！ */
-  gap: 0px;
+  /* ↓ 竖条间距。JS 已读取这个值并补进橙色面板定位，所以加间距不会再错位。
+       用 vw → 跟宽度一致缩放，任何屏幕比例稳定。想更宽/窄就调这个数。 */
+  gap: 0.9vw;
   max-width: min(40vw, 1500px);  /* ← 整行最大宽度：改这里 */
   margin: 0 auto;
   position: relative;            /* 让面板能相对此容器绝对定位 */

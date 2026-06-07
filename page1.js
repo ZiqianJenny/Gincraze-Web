@@ -490,18 +490,20 @@ function init17thInteraction() {
       const strip2W = wrap17.offsetWidth;
       const stripH  = wrap17.offsetHeight;
       const rowW    = row.offsetWidth;
+      const G = parseFloat(getComputedStyle(row).columnGap) || 0;  /* 竖条间距(px)，补进定位 */
 
-      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W) + 'px';
+      /* 点的是第2条：左面板盖第1条(含1个间距)，右面板盖第3-5条(从第3条左缘起，前面有1个间距) */
+      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - G) + 'px';
       panelLeft.style.top = '0'; panelLeft.style.height = stripH + 'px'; panelLeft.style.width = '0px';
       panelLeft.getBoundingClientRect();
       panelLeft.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelLeft.style.width = strip1W + 'px';
+      panelLeft.style.width = (strip1W + G) + 'px';
 
-      panelRight.style.left = (strip1W + strip2W) + 'px'; panelRight.style.top = '0';
+      panelRight.style.left = (strip1W + strip2W + G) + 'px'; panelRight.style.top = '0';
       panelRight.style.height = stripH + 'px'; panelRight.style.width = '0px';
       panelRight.getBoundingClientRect();
       panelRight.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelRight.style.width = (rowW - strip1W - strip2W) + 'px';
+      panelRight.style.width = (rowW - strip1W - strip2W - G) + 'px';
 
       const allEls = [
         ...panelLeft.querySelectorAll('.era-panel-title, .era-panel-body p'),
@@ -642,18 +644,20 @@ function init18thInteraction() {
       const strip3W = wrap18.offsetWidth;
       const stripH  = wrap18.offsetHeight;
       const rowW    = row.offsetWidth;
+      const G = parseFloat(getComputedStyle(row).columnGap) || 0;  /* 竖条间距(px)，补进定位 */
 
-      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - strip2W) + 'px';
+      /* 点的是第3条：左面板盖第1-2条(含2个间距)，右面板盖第4-5条(从第4条左缘起，前面有2个间距) */
+      panelLeft.style.left = 'auto'; panelLeft.style.right = (rowW - strip1W - strip2W - 2*G) + 'px';
       panelLeft.style.top = '0'; panelLeft.style.height = stripH + 'px'; panelLeft.style.width = '0px';
       panelLeft.getBoundingClientRect();
       panelLeft.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelLeft.style.width = (strip1W + strip2W) + 'px';
+      panelLeft.style.width = (strip1W + strip2W + 2*G) + 'px';
 
-      panelRight.style.left = (strip1W + strip2W + strip3W) + 'px'; panelRight.style.top = '0';
+      panelRight.style.left = (strip1W + strip2W + strip3W + 2*G) + 'px'; panelRight.style.top = '0';
       panelRight.style.height = stripH + 'px'; panelRight.style.width = '0px';
       panelRight.getBoundingClientRect();
       panelRight.style.transition = `width ${STRIP_T.SLIDE}ms cubic-bezier(0.4,0,0.2,1)`;
-      panelRight.style.width = (rowW - strip1W - strip2W - strip3W) + 'px';
+      panelRight.style.width = (rowW - strip1W - strip2W - strip3W - 2*G) + 'px';
 
       const allEls = [
         ...panelLeft.querySelectorAll('.era-panel-title, .era-panel-body p'),
