@@ -127,8 +127,10 @@
   left: 50%;
   transform: translateX(-50%);
   top: 25%;          /* ★ 红月上下位置（调大=下移，靠近文案，缩小月↔字距离） */
-  width:  clamp(160px, 25vw, 310px);
-  height: clamp(160px, 25vw, 310px);
+  /* ★ Plan B：月亮尺寸改成纯 vw，跟暗色区一起等比缩放（原 clamp 会在宽屏被封顶=不一致）。
+     21.5vw ≈ 你 1440 屏上原本的 310px。 */
+  width:  21.5vw;
+  height: 21.5vw;
   border-radius: 50%;
   background: #dd022b;
   box-shadow:
@@ -202,7 +204,9 @@
   font-family: "Baskerville-Medium", Baskerville, "Libre Baskerville",
                "Times New Roman", Georgia, serif;
   font-weight: 500;
-  font-size: 16pt;
+  /* ★ Plan B：字号改成跟屏幕宽度走（vw），与暗色区其他元素同步缩放，
+     任何屏幕上排版一致。1.48vw ≈ 你 1440 屏上的原 16pt。 */
+  font-size: 1.48vw;
   line-height: 2.0;
   opacity: 0;
   transform: translateY(8px);

@@ -7,3 +7,5 @@ _design_source_backup/
 
 # CSS 锁定前的本地备份（不上传）
 _css_backup_before_lock/
+
+_planB_backup/
