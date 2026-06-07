@@ -552,7 +552,7 @@
 
 .wig-orange-bar {
   position: absolute;
-  left: 43%;
+  left: 50%;          /* ★ 真正居中（原 43% 会在不同屏幕上偏移） */
   top: 54%;
   /* ↓ 居中公式不变；改 width 可调长度 */
   transform: translate(-50%, -50%);
@@ -567,7 +567,7 @@
   position: relative;
   z-index: 1;
   width: min(96%, 820px);
-  margin: 0 130px 0 0;                      /* 确保居中 */
+  margin: 0 auto;                           /* ★ 真正居中（原 0 130px 0 0 会把酒杯挤偏） */
   display: flex;
   justify-content: center;
   align-items: flex-end;

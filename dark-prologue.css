@@ -84,10 +84,10 @@
   position: relative;
   z-index: 0;
 
-  /* ★★ TRIM BOTTOM HERE — change this value ★★
-     Full image = calc(6682 / 1920 * 100vw) ≈ 348vw
-     Smaller value = less image shown from the bottom up */
-  height: 200vw;
+  /* ★★ 暗色区总高度 = 这个值。月亮/文案/EnterGame/城市都按它的百分比定位，
+     所以改这里 = 整块等比压缩，所有相对间距不变。
+     200vw → 160vw 即压缩到 80%（缩小间距）。想更紧凑就再调小。 */
+  height: 160vw;
 }
 
 /* The image itself fills the wrapper width, anchored to its top */
