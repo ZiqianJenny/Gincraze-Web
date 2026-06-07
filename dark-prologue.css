@@ -87,7 +87,7 @@
   /* ★★ 暗色区总高度 = 这个值。月亮/文案/EnterGame/城市都按它的百分比定位，
      所以改这里 = 整块等比压缩，所有相对间距不变。
      200vw → 160vw 即压缩到 80%（缩小间距）。想更紧凑就再调小。 */
-  height: 160vw;
+  height: 180vw;
 }
 
 /* The image itself fills the wrapper width, anchored to its top */
@@ -126,7 +126,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 35%;          /* ★ 红月上下位置（调大=下移，靠近文案，缩小月↔字距离） */
+  top: 25%;          /* ★ 红月上下位置（调大=下移，靠近文案，缩小月↔字距离） */
   width:  clamp(160px, 25vw, 310px);
   height: clamp(160px, 25vw, 310px);
   border-radius: 50%;
@@ -185,7 +185,7 @@
    ★ Adjust `top` to position within the Extended Canvas image.             */
 #dp-text {
   position: absolute;
-  top: 42%;           /* ★ 文案上下位置（调小=上移，靠近红月，缩小月↔字距离） */
+  top: 38%;           /* ★ 文案上下位置（调小=上移，靠近红月，缩小月↔字距离） */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -237,7 +237,7 @@
    ════════════════════════════════════════════════════════════ */
 #btn-enter-game2 {
   position: absolute;
-  top: 52%;              /* ★ Enter Game 上下位置：调小=上移(更进黑色区/离开城市)，调大=下移(靠近城市)。
+  top: 68%;              /* ★ Enter Game 上下位置：调小=上移(更进黑色区/离开城市)，调大=下移(靠近城市)。
                               城市约在 59% 处开始，所以保持在 59% 以上才会在黑色背景里。 */
   left: 50.2%;
   transform: translateX(-50%);
