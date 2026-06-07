@@ -126,7 +126,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 33%;          /* ★ vertical position within the section */
+  top: 35%;          /* ★ 红月上下位置（调大=下移，靠近文案，缩小月↔字距离） */
   width:  clamp(160px, 25vw, 310px);
   height: clamp(160px, 25vw, 310px);
   border-radius: 50%;
@@ -185,7 +185,7 @@
    ★ Adjust `top` to position within the Extended Canvas image.             */
 #dp-text {
   position: absolute;
-  top: 47%;           /* ★ vertical position */
+  top: 42%;           /* ★ 文案上下位置（调小=上移，靠近红月，缩小月↔字距离） */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -237,7 +237,8 @@
    ════════════════════════════════════════════════════════════ */
 #btn-enter-game2 {
   position: absolute;
-  top: 74%;              /* ★ 上下位置（占 section 高度的百分比） */
+  top: 52%;              /* ★ Enter Game 上下位置：调小=上移(更进黑色区/离开城市)，调大=下移(靠近城市)。
+                              城市约在 59% 处开始，所以保持在 59% 以上才会在黑色背景里。 */
   left: 50.2%;
   transform: translateX(-50%);
   z-index: 9995;         /* 高于城市(4)，低于云层(10000) */

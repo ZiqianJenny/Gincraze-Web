@@ -577,6 +577,10 @@
 .wig-glass-wrap img.wig-glass {
   position: relative;
   z-index: 2;
+  /* ★ 瓶子整体水平位置微调：让从左数第4个杯子(马天尼杯)对齐中线。
+     PNG 里瓶子偏右，所以往左移 12%（用 %，任何屏幕都成立）。
+     杯子还偏右 → 把 -12% 调更大(如 -15%)；偏左了 → 调小(如 -8%)。 */
+  left: -12%;
   width: 100%;
   height: auto;
   max-height: clamp(180px, 30vw, 320px);
