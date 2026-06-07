@@ -1,0 +1,679 @@
+/* ── 长页中段：铜版条 + What is Gin ── */
+
+@font-face {
+  font-family: "Rafaella";
+  src: local("Rafaella"), local("Rafaella Regular");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ② 五幅铜版竖条 */
+.opening-strips {
+  position: relative;
+  z-index: 2;
+  /* ↓ 整体位置：改这里的 padding-top 即可上下移动铜版条区域 */
+  padding: 10vh 3vw 4vh;
+  margin-top: 0;
+}
+
+.strips-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0px;                      /* ← 间隙：改这里（0=紧贴，4px=略松） */
+  max-width: min(40vw, 1500px);  /* ← 整行最大宽度：改这里 */
+  margin: 0 auto;
+  position: relative;            /* 让面板能相对此容器绝对定位 */
+}
+
+/* 外层 wrap：flex 分配 + 滚动滑入动画 */
+.era-strip-wrap {
+  flex: 1 1 0;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(90px);   /* 初始：在下方隐藏 */
+  transition:
+    opacity  0.65s ease,
+    transform 0.80s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 滚动到位后加此 class → 滑入 */
+.era-strip-wrap.strip-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 内层 article：只负责视差，不做动画 */
+.era-strip {
+  position: relative;            /* 让 canvas / 文字图层绝对定位于此 */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  overflow: hidden;
+  line-height: 0;
+  will-change: transform;
+  display: block;
+}
+
+.era-strip img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(82vh, 820px);  /* ← 图片最大高度：改这里 */
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+
+.era-strip:focus-visible {
+  outline: 2px solid #ff7d00;
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════
+   13th Century 铜板条交互系统
+   ═══════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Piepie";
+  src: local("Piepie"), local("Piepie Regular"), local("Piepie-Regular");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* 水波 Canvas：绝对覆盖在铜版画图上 */
+.strip-wave-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0; /* JS 点击后设为 1 */
+}
+
+/* TEXT.png 和 Text+Orange.png 叠加图（居中于条内）*/
+/* ↓ 默认值：JS 里会直接设 style.width/top 覆盖这里 */
+.strip-text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;         /* ← 图片大小：JS 里 textP1.style.width 会覆盖此处 */
+  height: auto;
+  z-index: 12;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 点击下按加深蒙版 */
+.strip-press-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28); /* ← 加深深度：0=透明，1=全黑 */
+  mix-blend-mode: multiply;        /* 正片叠底，保留图像细节 */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 7;
+}
+
+/* 橙色展开面板（初始宽高均为0，JS 动态扩展；height:0 防止内容撑高页面）*/
+.era-slide-panel {
+  position: absolute;
+  top: 0;
+  background: #ff7d00;
+  width: 0;
+  height: 0;          /* ★ Bug修复：防止宽度为0时内容垂直溢出拉伸页面 */
+  overflow: hidden;
+  z-index: 6;         /* 覆盖在其他铜版条之上 */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   右侧大面板（铜板条1橙 / 铜板条2橙2）内容区
+   ───────────────────────────────────────────────────────────── */
+.era-panel-content {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  /* padding：文字与面板四条边的距离
+     格式：padding: 上下  左右
+     ★ 【左右值】越小 → 文字栏越宽，每行能放更多字，内容不容易超出底部
+     ★ 【左右值】越大 → 文字栏越窄，每行字少，内容更容易超出底部
+     注意：左侧小面板有自己的 padding 设置（.era-panel-content--left），
+          改这里只影响右侧大面板，不会改动左侧小面板！
+     示例：
+       padding: 1.5rem 1rem   → 紧凑，文字接近撑满面板（文字多时推荐）
+       padding: 2rem 1.5rem   → 现在的值
+       padding: 3rem 3rem     → 宽松，文字栏窄，容易溢出底部 */
+  padding: 2rem 1.5rem;
+
+  /* justify-content：当内容比面板矮时，文字在面板里的垂直对齐方式
+     center     → 垂直居中（现在）
+     flex-start → 贴顶部
+     flex-end   → 贴底部 */
+  justify-content: flex-start;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   大面板标题（Piepie 字体）
+   ───────────────────────────────────────────────────────────── */
+.era-panel-title {
+  font-family: "Piepie", "Impact", "Arial Black", serif;
+
+  /* font-size：标题字号
+     改大 → 字变大，占更多行
+     改小 → 字变小，更紧凑
+     示例：
+       11pt → 较小，接近正文
+       20pt → 现在的值
+       28pt → 很大，像海报标题 */
+  font-size: 20pt;
+
+  font-weight: 700;
+
+  /* line-height：行与行之间的距离（倍数，相对于字号）
+     改大 → 行间距更宽松，像诗歌排版
+     改小 → 行间距紧，像报纸
+     示例：
+       1.0 → 行距=字号，很紧
+       1.25 → 现在的值（适中）
+       1.8 → 很宽松 */
+  line-height: 1.25;
+
+  color: #000;
+
+  /* width：标题文字块宽度
+     ★★ 要让标题与正文【同宽】：把这里的值改成和下面 .era-panel-body 的 width 一样！
+        例如两个都设 95% → 同宽；两个都设 100% → 同宽撑满
+     改大 → 文字块更宽，每行能排更多字
+     改小 → 文字块更窄，更早换行
+     示例：
+       70%  → 较窄，右侧留白多
+       95%  → 现在的值（与正文同宽）
+       100% → 撑满内边距以内的全部空间 */
+  width: 95%;
+
+  /* margin：标题块自身的外边距
+     格式：上  左右（auto=自动均分，实现居中）  下
+     最后一个值（1.4rem）= 标题与下方正文的间距
+     改大 → 标题和正文之间空白更大
+     改小 → 标题紧贴正文
+     示例：
+       margin: 0 auto 0.5rem → 标题与正文很近
+       margin: 0 auto 1.4rem → 现在的值
+       margin: 0 auto 3rem   → 标题和正文之间空白很大 */
+  margin: 0 auto 1rem;
+
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.4s ease, transform 0.45s ease;
+}
+.era-panel-title.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   大面板正文段落（Times New Roman）
+   ───────────────────────────────────────────────────────────── */
+.era-panel-body {
+  /* width：正文整体文字块宽度
+     ★★ 要让正文与标题【同宽】：把这里的值改成和上面 .era-panel-title 的 width 一样！
+        现在两个都是 95% → 同宽对齐
+     改大 → 正文更宽，每行字更多，内容总高度更矮，不容易溢出底部
+     改小 → 正文更窄，每行字少，内容更长，更容易溢出底部
+     示例：
+       70%  → 较窄，两侧留白多
+       95%  → 现在的值（与标题同宽）
+       100% → 完全占满内边距内的空间 */
+  width: 95%;
+  margin: 0 auto;
+}
+.era-panel-body p {
+  font-family: "Times New Roman", Times, Georgia, serif;
+
+  /* font-size：正文字号
+     改大 → 字变大，但每段占更多行，面板容易装不下
+     改小 → 字变小，可塞入更多文字
+     示例：
+       8pt  → 很小，像注脚
+       12pt → 现在的值（较舒适）
+       16pt → 较大，阅读轻松但内容少 */
+  font-size: 12pt;
+
+  /* line-height：行间距（倍数）
+     改大 → 行与行之间更宽松，更易阅读
+     改小 → 行间距紧，像密集排版
+     示例：
+       1.2 → 紧凑
+       1.5 → 现在的值
+       2.0 → 非常宽松 */
+  line-height: 1.5;
+
+  color: #000;
+
+  /* margin底部（0.72em）：段落与段落之间的间距
+     改大 → 段间空白更大，像双倍段落间距
+     改小 → 段落紧挨着
+     示例：
+       margin: 0 0 0.3em → 段落很近
+       margin: 0 0 0.72em → 现在的值
+       margin: 0 0 1.5em  → 段落之间有明显空白 */
+  margin: 0 0 0.72em;
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s ease, transform 0.38s ease;
+}
+.era-panel-body p.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   铜板条2：左侧小面板（铜板条2橙1）特有样式
+   ───────────────────────────────────────────────────────────── */
+.era-panel-content--left {
+  /* ★ 关键：允许内容区比 320px 更窄，否则左侧窄面板里文字全被截掉 */
+  min-width: 0;
+
+  /* justify-content：左面板内容的垂直位置
+     flex-end   → 说明文字+标题堆在底部（现在）
+     center     → 居中
+     flex-start → 贴顶部 */
+  justify-content: flex-end;
+
+  /* padding：文字与左面板四条边的距离
+     格式：上下  左右
+     改大 → 文字离面板边缘更远（内缩更多，留白更大）
+     改小 → 文字更靠近面板边缘（更满）
+     示例：
+       padding: 0.5rem 0.5rem → 很紧，文字几乎贴边
+       padding: 1rem 1rem     → 现在的值（适中）
+       padding: 2rem 1.5rem   → 上下留白很大 */
+  padding: 1.8rem 0.6rem;
+
+  /* text-align：左面板里文字的水平对齐方向
+     right  → 文字靠右对齐（现在）：每行文字从右边开始排
+     left   → 文字靠左对齐（普通书写方向）
+     center → 每行文字居中 */
+  text-align: right;
+}
+
+/* ★ 左面板内的标题和正文块：保持居中（margin: 0 auto），
+   文字对齐由上面的 text-align: right 控制即可。
+   不用 margin-left:auto，否则在窄面板里块会超出面板被截断。
+   如果想整体偏移：改 margin-left / margin-right 的值
+     margin: 0 auto    → 块在面板内居中（现在）
+     margin: 0 0 … 0   → 块贴左
+     没有"贴右"的简单写法，用 text-align:right 控制文字方向即可 */
+.era-panel-content--left .era-panel-title,
+.era-panel-content--left .era-panel-body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;        /* ← 文字块占左面板宽度的比例：改大→更宽，改小→更窄 */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   左面板底部大标题（What is Jenever）
+   ───────────────────────────────────────────────────────────── */
+.era-panel-title--sub {
+  /* font-size：左侧标题字号（覆盖上面 .era-panel-title 的 20pt）
+     改大 → "What is Jenever" 变大（注意：太大时 Jenever 会溢出面板）
+     改小 → 变小，更低调，更安全不溢出
+     示例：
+       8pt  → 很小，几乎像正文
+       14pt → 现在的值（适中）
+       20pt → 很大，容易超出窄面板 */
+  font-size: 14pt;
+
+  /* margin：格式：上  左右  下
+     第一个值（0.6rem）= 与上方说明文字的间距
+     改大 → "What is Jenever"和上方文字间距更大
+     改小 → 两者紧挨在一起
+     示例：
+       margin: 0.2rem auto 0 → 几乎紧贴
+       margin: 0.6rem auto 0 → 现在的值（有点空隙）
+       margin: 1.5rem auto 0 → 间距明显 */
+  margin: 1rem auto 0;
+
+  /* ★ 防止单词溢出面板：遇到太长的词自动在边界处换行
+     不需要改这两行，它们是保护性设置 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   左面板说明小字（Jenever 介绍）
+   ───────────────────────────────────────────────────────────── */
+.era-panel-body--sm p {
+  /* font-size：左侧说明文字字号
+     改大 → 字变大，更易读，但面板容易装不下
+     改小 → 字很小，像注脚
+     示例：
+       4pt → 极小，几乎看不清
+       5pt → 现在的值（小字注释感）
+       8pt → 正常可读 */
+  font-size: 9pt;
+
+  /* line-height：行间距（这里用固定pt值，不是倍数）
+     改大 → 每行之间空白变大，更稀疏
+     改小 → 行间距紧，字挤在一起
+     示例：
+       7pt  → 行距紧，小字更密
+       9pt  → 现在的值
+       12pt → 行距宽松，像正常正文 */
+  line-height: 14pt;
+}
+
+/* ══════════════════════════════════════════════════════
+   铜板条3（18th Century）专用面板样式
+   ══════════════════════════════════════════════════════ */
+
+/* ── 左侧面板（18th橙1）：内容从顶部开始，右对齐 ── */
+.era-panel-content--18l {
+  min-width: 0;              /* ★ 防止窄面板内容溢出（不要删这行）*/
+  justify-content: flex-start; /* 内容从顶部排列（改 center=居中，flex-end=贴底）*/
+  padding: 2rem 1.5rem;      /* 上下  左右 → 越小文字区域越宽 */
+  text-align: right;         /* 文字靠右（改 left=靠左，center=居中）*/
+}
+.era-panel-content--18l .era-panel-title,
+.era-panel-content--18l .era-panel-body {
+  margin-left: auto;         /* 文字块整体靠右 */
+  margin-right: auto;
+  width: 95%;                /* 文字块宽度（改大→更宽，改小→两侧留白更多）*/
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 左侧大标题：Piepie 18pt，行距 16pt
+   改法：font-size → 字变大/小；line-height → 行间距 */
+.era-panel-title--18l {
+  font-size: 30pt;           /* ← 左侧标题字号：改这里 */
+  line-height: 30pt;         /* ← 左侧标题行距：改这里（比字号小=行距紧）*/
+}
+
+/* ── 右侧面板（18th橙2）：正文在上、标题在下，左对齐 ── */
+.era-panel-content--18r {
+  min-width: 0;              /* ★ 防止窄面板溢出 */
+  justify-content: space-between; /* 正文顶部，标题底部（space-between=两端撑开）*/
+  text-align: left;          /* 文字靠左（和左侧面板镜像对称）*/
+}
+.era-panel-content--18r .era-panel-title,
+.era-panel-content--18r .era-panel-body {
+  margin-left: 0;            /* 文字块整体靠左 */
+  margin-right: auto;
+  width: 90%;                /* 文字块宽度 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 右侧底部标题：Piepie 10pt
+   改法同上 */
+.era-panel-title--18r {
+  font-size: 18pt;           /* ← 右侧标题字号：改这里 */
+  line-height: 1.2;          /* ← 右侧标题行距（倍数）：改这里 */
+  margin: 0;                 /* 贴底，不额外加间距 */
+}
+
+/* 18th century 正文：9pt（左右面板共用，覆盖共享的 12pt）
+   改法：font-size → 字号；line-height → 行间距 */
+.era-panel-content--18l .era-panel-body p,
+.era-panel-content--18r .era-panel-body p {
+  font-size: 12pt;            /* ← 18th 正文字号：改这里 */
+  line-height: 1.5;         /* ← 18th 正文行距：改这里 */
+}
+
+/* ══════════════════════════════════════════════════════
+   铜板条4（19-20th Century）专用面板样式
+   ══════════════════════════════════════════════════════ */
+
+/* ── 左侧面板（19th橙1）：内容从顶部开始，右对齐 ── */
+.era-panel-content--19l {
+  min-width: 0;              /* ★ 防止窄面板内容溢出（不要删这行）*/
+  justify-content: flex-start; /* 内容从顶部排列 */
+  padding: 2rem 1.5rem;      /* 上下  左右 → 复用铜板条2右侧数值 */
+  text-align: right;         /* 文字靠右对齐 */
+}
+.era-panel-content--19l .era-panel-title,
+.era-panel-content--19l .era-panel-body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;                /* ← 文字块占面板宽度的比例：改这里 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 左侧标题：Piepie 11pt */
+.era-panel-title--19l {
+  font-size: 20pt;           /* ← 左侧标题字号：改这里 */
+  line-height: 1.25;         /* ← 左侧标题行距（倍数）：改这里 */
+}
+
+/* 左侧正文：Times New Roman 9pt */
+.era-panel-content--19l .era-panel-body p {
+  font-size: 12pt;            /* ← 左侧正文字号：改这里 */
+  line-height: 1.5;          /* ← 左侧正文行距：改这里 */
+}
+
+/* ── 右侧面板（19th橙2）：正文在上、标题在下，左对齐 ── */
+.era-panel-content--19r {
+  min-width: 0;              /* ★ 防止窄面板溢出 */
+  justify-content: flex-end; /* 标题＋正文整体沉底 */
+  padding: 1.8rem 0.6rem;    /* 上下  左右 → 复用铜板条2左侧数值 */
+  text-align: left;          /* 文字靠左对齐 */
+}
+.era-panel-content--19r .era-panel-title,
+.era-panel-content--19r .era-panel-body {
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;                /* ← 文字块占面板宽度的比例：改这里 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 右侧底部标题：Piepie 9pt */
+.era-panel-title--19r {
+  font-size: 14pt;            /* ← 右侧标题字号：改这里 */
+  line-height: 1.25;         /* ← 右侧标题行距：改这里 */
+  margin: 0;                 /* 贴底，不额外加间距 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 右侧正文：Times New Roman 5pt，行距 9pt */
+.era-panel-body--19r p {
+  font-size: 9pt;            /* ← 右侧正文字号：改这里 */
+  line-height: 14pt;          /* ← 右侧正文行距（固定pt值）：改这里 */
+}
+
+/* ══════════════════════════════════════════════════════════
+   21st Century 面板（向左展开，覆盖条1-4）
+   ══════════════════════════════════════════════════════════ */
+.era-panel-content--21st {
+  justify-content: flex-start; /* 标题在顶，正文跟随往下 */
+  text-align: right;           /* 文字靠右对齐 */
+}
+.era-panel-content--21st .era-panel-title,
+.era-panel-content--21st .era-panel-body {
+  width: 90%;                  /* ← 文字块宽度：改这里 */
+  margin-left: auto;
+  margin-right: 0;             /* 贴右边缘 */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 21st 小标题：Piepie 11pt，靠右 */
+.era-panel-title--21st {
+  font-size: 20pt;             /* ← 标题字号：改这里 */
+  line-height: 1.25;           /* ← 标题行距：改这里 */
+  margin: 0 0 1rem auto;       /* ← 标题与正文间距：改最后一个值 */
+}
+
+/* 21st 正文：Times New Roman 9pt，靠右 */
+.era-panel-body--21st p {
+  font-size: 12pt;              /* ← 正文字号：改这里 */
+  line-height: 1.5;            /* ← 正文行距：改这里 */
+  text-align: right;
+}
+
+/* ③ What is Gin */
+.opening-wig {
+  position: relative;
+  z-index: 2;
+  padding: 20vh 5vw 4vh;
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.wig-parallax-zone {
+  position: relative;
+  margin: 0 auto 2rem;
+  width: min(94vw, 900px);
+  height: clamp(200px, 20vw, 380px);   /* ← 区域高度：调大让酒杯有空间 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wig-orange-bar {
+  position: absolute;
+  left: 43%;
+  top: 54%;
+  /* ↓ 居中公式不变；改 width 可调长度 */
+  transform: translate(-50%, -50%);
+  width: min(90vw, 1200px);            /* ← 橙条长度：改这里（vw=屏幕比例，1200px=上限） */
+  height: clamp(52px, 8.5vw, 88px);   /* ← 橙条高度：改这里 */
+  background: #ff7d00;
+  border-radius: 1px;
+  z-index: 0;
+}
+
+.wig-glass-wrap {
+  position: relative;
+  z-index: 1;
+  width: min(96%, 820px);
+  margin: 0 130px 0 0;                      /* 确保居中 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  will-change: transform;
+}
+
+.wig-glass-wrap img.wig-glass {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: auto;
+  max-height: clamp(180px, 30vw, 320px);
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+  user-select: none;
+  will-change: filter;
+}
+
+/* 旧椭圆阴影已废弃——改用 JS drop-shadow */
+.wig-glass-wrap .wig-shadow-layer {
+  display: none;
+}
+
+.wig-reveal-group .wig-reveal-item {
+  opacity: 0;
+  transform: translateY(60px);  /* 从下方滑入（正值=从下，负值=从上） */
+  transition:
+    opacity 0.65s ease,
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wig-reveal-group.is-visible .wig-parallax-zone.wig-reveal-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.05s;
+}
+
+.wig-reveal-group.is-visible .wig-title.wig-reveal-item,
+.wig-reveal-group.is-visible .wig-title-img.wig-reveal-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.28s;
+}
+
+.wig-reveal-group.is-visible .wig-body.wig-reveal-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.42s;
+}
+
+/* "What Is Gin" 标题图片 */
+.wig-title-img {
+  display: block;
+  margin: 0 auto 1.0rem;               /* ← 图片与正文间距：改 1.2rem */
+  width: auto;
+  max-width: min(88vw, 520px);         /* ← 标题图宽度：改这里 */
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.wig-body {
+  margin: 0 auto;                       /* ← 水平居中；改 margin-top 可上下移位 */
+  max-width: min(700vw, 1000px);          /* ← 文字行宽：改这里 */
+  font-family: Baskerville, "Libre Baskerville", "Times New Roman", Georgia, serif;
+  font-size: 14pt;                      /* ← 字号：改这里（原来8pt，越大越大） */
+  line-height: 1.5;                    /* ← 行间距：改这里（1.0=紧，2.0=宽松） */
+  color: #000000;
+  text-align: center;
+}
+
+.opening-continue {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2vh 1.5rem 12vh;
+}
+
+.btn-enter-game {
+  font-family: Baskerville, "Libre Baskerville", Georgia, serif;
+  font-size: 11pt;
+  letter-spacing: 0.06em;
+  color: #000;
+  background: transparent;
+  border: 1px solid #ff7d00;
+  padding: 0.75rem 1.75rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-enter-game:hover {
+  background: #ff7d00;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .opening-longpage {
+    min-height: 260vh;
+  }
+
+  .strips-row {
+    gap: 3px;
+  }
+
+  .era-strip {
+    width: clamp(42px, 16.5vw, 68px);
+  }
+
+  .era-strip img {
+    max-height: 48vh;
+  }
+}

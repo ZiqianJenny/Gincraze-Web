@@ -1,0 +1,25 @@
+{
+  "_note": "【如何预览你的修改】1) 用本地服务器打开（不要只双击 html）: 在终端 cd 到本文件夹，运行 python3 -m http.server 8080，浏览器打开 http://localhost:8080  2) 只改下面 computed 里的数字，保存文件  3) 浏览器按 Cmd+Shift+R 强制刷新。改 sliders 不会自动生效，除非删掉整个 computed 对象。",
+
+  "sliders": {
+    "count": 22,
+    "speed": 32,
+    "size": 48,
+    "shape": 40,
+    "opacity": 78,
+    "burst": 45
+  },
+
+  "computed": {
+    "maxParticles": 18,
+    "seedCount": 5,
+    "speed": 0.32,
+    "size": 3.2,
+    "shapeRingRatio": 0.4,
+    "opacity": 0.835,
+    "burstChance": 0.006,
+    "spawnRate": 0.45,
+    "topEdgePx": 6,
+    "maxLife": 280
+  }
+}

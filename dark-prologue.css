@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════════════════
+   dark-prologue.css v2
+   Extended Canvas scrolls naturally; clouds, text, moon overlay it.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════
+   ★★★  QUICK-ADJUST GUIDE  ★★★
+   ──────────────────────────────────────────────────────────
+   CLOUD LEFT  size  →  #dp-cloud-left  { width: ... }
+   CLOUD LEFT  pos   →  #dp-cloud-left  { top: XX% }
+   CLOUD RIGHT size  →  #dp-cloud-right { width: ... }
+   CLOUD RIGHT pos   →  #dp-cloud-right { top: XX% }
+
+   MOON  size        →  #dp-moon { width: clamp(min,pref,max);
+                                   height: same value; }
+   MOON  position    →  #dp-moon { top: XX% }
+
+   TEXT  position    →  #dp-text { top: XX% }
+   TEXT  font size   →  .dp-line { font-size: XXpt }
+   TEXT  line gap    →  .dp-line { line-height: X.X }
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ── */
+#dark-prologue {
+  position: relative;
+  width: 100%;
+  background: #fff;
+  overflow-x: clip;
+  overflow-y: clip;
+}
+
+/* ════════════════════════════════════════════════════════════
+   城市剪影 — 绝对定位在 #dark-prologue 内部底部
+   因为在同一个 section 里，z-index 可以直接控制层序。
+
+   ★ 城市上下位置  →  bottom: 0  （贴底部）
+                       改成 bottom: -5vw 可以让城市往下移一点
+
+   ★ 城市可见高度  →  height: 65vw
+                       增大 = 显示更多城市内容（最大约 109vw = 完整图片）
+                       减小 = 裁掉底部，城市变矮
+
+   ★ 层级（和文字的前后关系）→  z-index: 4
+                       数字比文字（9994）和红线（9991）小 = 城市在底层
+                       改成比 9991 大的数 = 城市挡住红线
+   ════════════════════════════════════════════════════════════ */
+#site-city-footer {
+  position: absolute;
+  bottom: 0;                /* ★ 城市垂直位置 */
+  left: 0;
+  width: 100%;
+  height: 65vw;             /* ★ 城市可见高度（裁切底部透明区域） */
+  overflow: hidden;
+  z-index: 4;               /* ★ 城市层级：低于文字(9994)和红线(9991) */
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Transparent Base image + crop wrapper
+   ════════════════════════════════════════════════════════════
+
+   The image is 1920 × 6682 px.  At 100% viewport width its
+   natural display height = (6682 / 1920) × 100vw ≈ 348 vw.
+
+   HOW TO TRIM THE BOTTOM:
+   ─────────────────────────────────────────────────────────
+   Change the `height` value on #dp-canvas-bg-wrap below.
+   Examples:
+     height: 40vw   → shows roughly the top 11.5% of the image
+                       (white fade + some black)
+     height: 80vw   → shows top ~23% (more black background)
+     height: 200vw  → shows top ~57% (half the image)
+     height: 348vw  → full image, nothing trimmed (default)
+
+   The number is in viewport-width units so it scales with
+   screen size the same way the image does.
+   ════════════════════════════════════════════════════════════ */
+
+/* Wrapper controls how much of the image is visible */
+#dp-canvas-bg-wrap {
+  display: block;
+  width: 100%;
+  overflow: hidden;          /* hides everything below the set height */
+  position: relative;
+  z-index: 0;
+
+  /* ★★ TRIM BOTTOM HERE — change this value ★★
+     Full image = calc(6682 / 1920 * 100vw) ≈ 348vw
+     Smaller value = less image shown from the bottom up */
+  height: 200vw;
+}
+
+/* The image itself fills the wrapper width, anchored to its top */
+#dp-canvas-bg {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Star canvas: fixed to viewport, only visible when section is on screen ──
+   Controlled via JS IntersectionObserver (opacity 0/1).
+   z-index sits below cocktail bubbles (9999) but above page content.       */
+#dp-stars-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#dp-stars-canvas.dp-active {
+  opacity: 1;
+}
+
+/* ── Red Moon ──
+   Positioned as % of section height so it lands in the right image area.
+   ★ Adjust `top` to move up/down within the Extended Canvas.               */
+#dp-moon {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 33%;          /* ★ vertical position within the section */
+  width:  clamp(160px, 25vw, 310px);
+  height: clamp(160px, 25vw, 310px);
+  border-radius: 50%;
+  background: #dd022b;
+  box-shadow:
+    0 0 26px  5px rgba(221, 2, 43, 0.55),
+    0 0 65px 16px rgba(221, 2, 43, 0.22),
+    0 0 110px 36px rgba(221, 2, 43, 0.10);
+  z-index: 9992;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#dp-moon.dp-visible {
+  opacity: 1;
+}
+
+/* ── Clouds ──
+   Positioned at the edges, partially off-screen.
+   pointer-events: auto — hover triggers the drift effect.
+   ★ Adjust `top` to match their location on the Extended Canvas image.
+   ★ Adjust `width` to control coverage.                                    */
+#dp-cloud-left {
+  position: absolute;
+  left: -20%;
+  top: 2%;           /* ★ vertical position */
+  width: clamp(1120px, 90vw, 2480px);   /* ★ width */
+  height: auto;
+  /* z-index ABOVE the cocktail-bubble canvas (9999) so bubbles vanish
+     behind the clouds at the light→dark boundary.                      */
+  z-index: 10000;
+  pointer-events: auto;
+  user-select: none;
+  cursor: default;
+  /* CSS transition for hover drift */
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+#dp-cloud-right {
+  position: absolute;
+  right: -20%;
+  top: 4%;           /* ★ vertical position */
+  width: clamp(860px,90vw, 2100px);   /* ★ width */
+  height: auto;
+  z-index: 10000;
+  pointer-events: auto;
+  user-select: none;
+  cursor: default;
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+/* ── Prologue text ──
+   ★ Adjust `top` to position within the Extended Canvas image.             */
+#dp-text {
+  position: absolute;
+  top: 47%;           /* ★ vertical position */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  text-align: center;
+  z-index: 10000;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Each text line — hidden until scrolled into view */
+.dp-line {
+  display: block;
+  color: #ff5a00;
+  font-family: "Baskerville-Medium", Baskerville, "Libre Baskerville",
+               "Times New Roman", Georgia, serif;
+  font-weight: 500;
+  font-size: 16pt;
+  line-height: 2.0;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+  will-change: opacity, transform;
+}
+.dp-line.dp-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Paragraph spacer — always takes up space, no fade needed */
+.dp-line--spacer {
+  display: block;
+  height: 0.85em;
+  opacity: 1  !important;
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* "Let it fall." — italic, same size per request */
+.dp-line--final {
+  font-style: italic;
+  margin-top: 1.1em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Enter Game 按钮
+   ════════════════════════════════════════════════════════════
+   ★ 上下位置  →  #btn-enter-game2 { top: XX% }
+   ★ 大小      →  #btn-enter-game2 img { width: XXvw }
+   ════════════════════════════════════════════════════════════ */
+#btn-enter-game2 {
+  position: absolute;
+  top: 74%;              /* ★ 上下位置（占 section 高度的百分比） */
+  left: 50.2%;
+  transform: translateX(-50%);
+  z-index: 9995;         /* 高于城市(4)，低于云层(10000) */
+
+  /* 重置按钮默认样式 */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+
+  /* 悬停放大动画 */
+  transition: transform 0.25s ease, filter 0.25s ease;
+  will-change: transform;
+}
+
+#btn-enter-game2:hover {
+  transform: translateX(-50%) scale(1.06);
+  filter: brightness(1.15);
+}
+
+#btn-enter-game2:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+#btn-enter-game2 img {
+  display: block;
+  width: 18vw;           /* ★ 按钮图片宽度 */
+  height: auto;
+  /* 白色背景在黑底上消失，橙色文字保留 */
+  mix-blend-mode: screen;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── 页面过渡遮罩 ── */
+#page-fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+#page-fade-overlay.fading {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Base City footer — sits at the very bottom of the page
+   ════════════════════════════════════════════════════════════
+
+   The image is 1920 × 2098 px (red silhouette on white).
+   mix-blend-mode: screen  →  red shows on black, white glows.
+   If you want a pure white-background feel instead, change
+   the background to #fff and mix-blend-mode to multiply.
+
+   HOW TO ADJUST:
+   ──────────────────────────────────────────────────────────
+   ★ Image width       →  #site-city-img { width: XX% }
+                           100% = full viewport width
+                           80%  = narrower, centered
+
+   ★ Horizontal align  →  #site-city-footer { justify-content: center }
+                           (center / flex-start / flex-end)
+
+   ★ Top gap above     →  #site-city-footer { margin-top: XXpx }
+
+   ★ Background colour →  #site-city-footer { background: #000 }
+                           Must match whatever colour is above it.
+   ════════════════════════════════════════════════════════════ */
+
+#site-city-footer {
+  display: block;
+  width: 100%;
+  background: #000;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+
+  /* ★★ 裁切底部空白 — 改这里 ★★
+     图片原尺寸 1920 × 2098px，全宽时高度 ≈ 109vw。
+     城市剪影只在图片上半部分（约60%），下半部分是透明区域
+     → 透明区域在黑色背景上显示为黑色 = 看起来是空白。
+
+     减小这个值 → 裁掉更多底部空白。
+     增大这个值 → 显示更多图片。
+     109vw = 完整显示，不裁切。                          */
+  height: 70vw;
+}
+
+#site-city-img {
+  display: block;
+  position: absolute;
+  top: 0;                     /* 从容器顶部开始 = 显示图片上半部分（红色剪影所在区域） */
+  left: 0;
+  width: 100%;                /* ★ 城市图宽度：改 80% 可以让图片窄一些 */
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  mix-blend-mode: screen;     /* 红色在黑底上正常显示 */
+}

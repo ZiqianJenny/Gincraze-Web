@@ -1,0 +1,47 @@
+/**
+ * 第一页完整长卷：单页滚动
+ */
+
+body.mode-opening {
+  /* ★ overflow-x 移至子容器 — 避免 body overflow:hidden 导致
+       position:fixed 子元素被裁切的 Chrome 渲染 bug           */
+  overflow-x: visible;
+  overflow-y: auto;
+  background: #fff;
+}
+
+/* 页面横向溢出由 #opening-scroll 负责裁切（效果与之前相同） */
+body.mode-opening #opening-scroll {
+  overflow-x: hidden;
+}
+
+body.mode-opening #opening-scroll #app {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  min-height: auto;
+}
+
+body.mode-opening #opening-longpage {
+  display: block;
+}
+
+body.mode-opening #app > .screen {
+  display: none !important;
+}
+
+body:not(.mode-opening) #opening-scroll {
+  display: none;
+}
+
+/* 整页底图（第一页底页） */
+.opening-longpage {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: url("assets/page1/bg-page-canvas.png") center top / 100% auto no-repeat;
+  background-color: #fff;
+  /* 画幅高度随底图比例，保证铜版条与 WIG 落在正确色区 */
+  min-height: 240vh;
+}

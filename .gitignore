@@ -1,0 +1,6 @@
+# macOS 系统垃圾
+.DS_Store
+**/.DS_Store
+
+# 仓库外的设计母版（不上传）
+_design_source_backup/

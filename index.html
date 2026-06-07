@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gin Craze London — 伦敦金酒狂潮</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="splash.css?v=longpage" />
+  <link rel="stylesheet" href="opening-layout.css?v=bg2" />
+  <link rel="stylesheet" href="page1.css" />
+  <link rel="stylesheet" href="dark-prologue.css" />
+</head>
+<body>
+  <div id="opening-scroll">
+    <div id="app">
+      <!-- 第一页完整长卷：开屏 + 铜版条 + What is Gin（同一界面，上下滚动） -->
+      <article id="opening-longpage" class="opening-longpage" aria-label="Gin 开场长页">
+
+        <!-- ① 开屏区：Logo + 引文 + 气泡 -->
+        <section id="screen-splash" class="opening-hero" aria-label="开屏">
+          <canvas id="splash-bubbles" aria-hidden="true"></canvas>
+          <div class="splash-foreground">
+            <img
+              class="splash-logo"
+              src="assets/logo-gin.png"
+              alt="Gin"
+              width="840"
+              height="400"
+            />
+            <div class="splash-quote-wrap">
+              <blockquote class="splash-quote">
+                “Fortunately, there is gin, the sole glimmer in this darkness. Do you feel the golden, copper-coloured light it kindles in you? I like walking through the city of an evening in the warmth of gin.”
+                <cite>- Albert Camus</cite>
+              </blockquote>
+            </div>
+          </div>
+        </section>
+
+        <!-- ② 五幅铜版竖条 -->
+        <section class="opening-strips" id="opening-strips" aria-label="金酒历史时期">
+          <div id="era-strips-row" class="strips-row" data-era-strip-row></div>
+        </section>
+
+        <!-- ③ What is Gin -->
+        <section class="opening-wig" id="what-is-gin" aria-label="What is Gin">
+          <div id="wig-reveal" class="wig-reveal-group">
+            <div id="wig-parallax-zone" class="wig-parallax-zone wig-reveal-item" data-parallax>
+              <div class="wig-orange-bar" aria-hidden="true"></div>
+              <div class="wig-glass-wrap">
+                <div class="wig-shadow-layer" aria-hidden="true"></div>
+                <img
+                  class="wig-glass"
+                  src="assets/page1/gin-glass.png"
+                  alt="Gin bottles and glass"
+                  width="760"
+                  height="280"
+                />
+              </div>
+            </div>
+            <img class="wig-title-img wig-reveal-item" src="assets/page1/What%20Is%20Gin.png" alt="WHAT IS GIN?" />
+            <p class="wig-body wig-reveal-item">
+              At its most elemental, gin is a distilled spirit defined by a single non-negotiable ingredient: the juniper berry. By legal definition, gin must derive its main characteristic flavour from juniper berries and be bottled at no less than 40% alcohol by volume. Everything else — the grain, the additional botanicals, the distillation method — is where the art begins
+            </p>
+          </div>
+        </section>
+
+      </article>
+
+      <!-- ══════════════════════════════════════════════════════
+           Dark Prologue — Extended Canvas + overlay elements
+           ══════════════════════════════════════════════════════ -->
+      <section id="dark-prologue" aria-label="Prologue">
+
+        <!-- Transparent Base: white→black gradient that bridges the light page.
+             Wrapped in a div so you can trim its bottom without touching the file.
+             ★ To shorten: change the height on #dp-canvas-bg-wrap in dark-prologue.css -->
+        <div id="dp-canvas-bg-wrap">
+          <img id="dp-canvas-bg"
+               src="assets/page1/Dark%20Half%20Page/Transparent%20Base.png"
+               alt="" aria-hidden="true" />
+        </div>
+
+        <!-- Star canvas: position:fixed, shown only when section is visible -->
+        <canvas id="dp-stars-canvas" aria-hidden="true"></canvas>
+
+        <!-- Red moon -->
+        <div id="dp-moon" aria-hidden="true"></div>
+
+        <!-- Clouds — hover triggers small drift to each side -->
+        <img id="dp-cloud-left"
+             src="assets/page1/Dark%20Half%20Page/Cloud%20Left.png"
+             alt="" aria-hidden="true" />
+        <img id="dp-cloud-right"
+             src="assets/page1/Dark%20Half%20Page/Cloud%20Right.png"
+             alt="" aria-hidden="true" />
+
+        <!-- Prologue text — each line fades in as it scrolls into view -->
+        <div id="dp-text">
+          <span class="dp-line">Gin. A drink beloved by many —</span>
+          <span class="dp-line">born as medicine, embraced as escape,</span>
+          <span class="dp-line">worn like a small and harmless treasure</span>
+          <span class="dp-line">against the weight of the world.</span>
+          <span class="dp-line dp-line--spacer" aria-hidden="true">&nbsp;</span>
+          <span class="dp-line">In the 18th century, it was something else entirely.</span>
+          <span class="dp-line">A cunning devil in a bottle.</span>
+          <span class="dp-line">It blinded men, broke bodies,</span>
+          <span class="dp-line">and dragged souls to the edge of death.</span>
+          <span class="dp-line">It made people mad, wicked, desperate —</span>
+          <span class="dp-line">thieves in the night and sinners in the daylight.</span>
+          <span class="dp-line">This was the era they would come to call the <em>Gin Craze</em>.</span>
+          <span class="dp-line dp-line--spacer" aria-hidden="true">&nbsp;</span>
+          <span class="dp-line">And it is the era you are about to inhabit.</span>
+          <span class="dp-line">You are Gin.</span>
+          <span class="dp-line">And it is time to spread your beauty, your ruin,</span>
+          <span class="dp-line">and everything in between across the city of London.</span>
+          <span class="dp-line dp-line--final">Let it fall.</span>
+        </div>
+
+        <!-- Enter Game button -->
+        <button id="btn-enter-game2" aria-label="Enter Game">
+          <img src="assets/page1/Dark%20Half%20Page/Enter%20Game.png"
+               alt="Enter Game" />
+        </button>
+
+        <!-- Page-transition overlay (fades to black before navigating) -->
+        <div id="page-fade-overlay"></div>
+
+        <!-- City silhouette — inside the section so z-index works reliably.
+             Sits at the bottom, BEHIND text/lines/moon.
+             ★ To adjust height/position: see #site-city-footer in dark-prologue.css -->
+        <div id="site-city-footer">
+          <img id="site-city-img"
+               src="assets/page1/Dark%20Half%20Page/Base%20City.png"
+               alt="London city silhouette" />
+        </div>
+
+      </section><!-- /#dark-prologue -->
+
+      <!-- 游戏开场（掷骰） -->
+      <section id="screen-start" class="screen">
+        <header class="title-block">
+          <p class="era">London · Anno Domini 1720</p>
+          <h1>Gin Craze London</h1>
+          <p class="subtitle">你是 Gin 的「侵略者」——让金酒席卷整座伦敦</p>
+        </header>
+        <div class="intro-card">
+          <p>1720 年代的伦敦，廉价杜松子酒从贫民窟蔓延到议会走廊。你只有有限的行动次数，必须在十个关键地点播下狂热的种子。</p>
+          <p><strong>侵蚀度</strong>是唯一核心数值，从 0 开始，越高结局越疯狂。</p>
+        </div>
+        <button id="btn-start" class="btn primary">掷骰开始 · 3 + 1d6 行动</button>
+        <div id="dice-area" class="dice-area hidden">
+          <div class="dice" id="dice">?</div>
+          <p id="dice-result" class="dice-result"></p>
+        </div>
+      </section>
+
+      <!-- 主游戏 -->
+      <section id="screen-game" class="screen">
+        <header class="hud">
+          <div class="hud-stat">
+            <span class="label">侵蚀度</span>
+            <div class="meter-wrap">
+              <div id="erosion-bar" class="meter-fill"></div>
+            </div>
+            <span id="erosion-value" class="value">0</span>
+          </div>
+          <div class="hud-stat actions">
+            <span class="label">剩余行动</span>
+            <span id="actions-value" class="value big">0</span>
+          </div>
+          <div id="status-flags" class="status-flags"></div>
+        </header>
+
+        <p id="game-hint" class="game-hint">选择一处尚未访问的地点，消耗 1 次行动</p>
+
+        <div class="map-container">
+          <svg class="map-bg" viewBox="0 0 800 520" aria-hidden="true">
+            <defs>
+              <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4a6a8a" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#6a8aaa" stop-opacity="0.35"/>
+              </linearGradient>
+            </defs>
+            <rect width="800" height="520" fill="#2a2218"/>
+            <path d="M380,0 Q420,180 400,320 Q380,420 360,520" fill="url(#riverGrad)" opacity="0.6"/>
+            <path d="M0,280 Q200,260 400,270 Q600,280 800,265 L800,300 Q500,310 400,300 Q150,290 0,305 Z" fill="#1e1812" opacity="0.8"/>
+            <text x="400" y="40" text-anchor="middle" fill="#8a7a5a" font-size="11" font-family="serif" opacity="0.5">THE CITY OF LONDON</text>
+          </svg>
+          <div id="map-pins" class="map-pins"></div>
+        </div>
+
+        <div id="feedback" class="feedback hidden"></div>
+      </section>
+
+      <!-- 地点事件卡 -->
+      <section id="screen-location" class="screen">
+        <article class="event-card">
+          <header class="event-header">
+            <span id="loc-icon" class="loc-icon"></span>
+            <div>
+              <h2 id="loc-name"></h2>
+              <p id="loc-era" class="loc-era"></p>
+            </div>
+          </header>
+          <p id="loc-intro" class="loc-intro"></p>
+          <div id="loc-options" class="options"></div>
+          <button id="btn-back-map" class="btn ghost hidden">返回地图</button>
+        </article>
+      </section>
+
+      <!-- 结局 -->
+      <section id="screen-ending" class="screen">
+        <article class="ending-card">
+          <p class="era">终局 · Final Judgement</p>
+          <h2 id="ending-title"></h2>
+          <p id="ending-score" class="ending-score"></p>
+          <p id="ending-text" class="ending-text"></p>
+          <ul id="ending-journal" class="ending-journal"></ul>
+          <button id="btn-restart" class="btn primary">再玩一局</button>
+        </article>
+      </section>
+    </div>
+  </div>
+
+  <script src="splash.js?v=config"></script>
+  <script src="cocktail-bubbles.js"></script>
+  <script src="opening-bridge.js"></script>
+  <script src="dark-prologue.js"></script>
+  <script src="page1.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
