@@ -47,11 +47,16 @@ let _starRaf = null;
 
 function _initStars() {
   if (!_starsCvs) return;
-  _starsCvs.width  = window.innerWidth;
-  _starsCvs.height = window.innerHeight;
-  _stars = Array.from({ length: STAR_COUNT }, () => ({
-    x:    Math.random() * _starsCvs.width,
-    y:    Math.random() * _starsCvs.height,
+  /* Plan B：星空现在是暗色区内部的绝对画布 → 按它自己的实际尺寸来 */
+  var w = _starsCvs.clientWidth  || window.innerWidth;
+  var h = _starsCvs.clientHeight || window.innerHeight;
+  _starsCvs.width  = w;
+  _starsCvs.height = h;
+  /* 暗色区很高，星数随高度增加以维持密度 */
+  var count = Math.max(STAR_COUNT, Math.round(STAR_COUNT * (h / 900)));
+  _stars = Array.from({ length: count }, () => ({
+    x:    Math.random() * w,
+    y:    Math.random() * h,
     r:    0.4 + Math.random() * 1.7,
     ph:   Math.random() * Math.PI * 2,
     freq: 0.4 + Math.random() * 1.8,

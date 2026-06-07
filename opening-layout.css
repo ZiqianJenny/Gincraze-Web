@@ -12,7 +12,9 @@ body.mode-opening {
 
 /* 页面横向溢出由 #opening-scroll 负责裁切（效果与之前相同） */
 body.mode-opening #opening-scroll {
-  overflow-x: hidden;
+  overflow: hidden;          /* 裁掉缩放后 layout 溢出（空白），body 负责滚动 */
+  position: relative;
+  width: 100%;
 }
 
 body.mode-opening #opening-scroll #app {
@@ -20,6 +22,14 @@ body.mode-opening #opening-scroll #app {
   margin: 0;
   padding: 0;
   min-height: auto;
+
+  /* ══ Plan B：固定设计稿「舞台」+ 整体等比缩放 ══
+     设计基准宽度 1512px（你 MacBook 的视口宽）。页内全部用固定 px，
+     整块按 屏宽/1512 缩放 → 任何屏幕都是 MacBook 画面的等比放大/缩小，逐像素一致。
+     --page-scale 与 #opening-scroll 高度由 opening-bridge.js 设置。 */
+  width: 1512px;
+  transform-origin: top left;
+  transform: scale(var(--page-scale, 1));
 }
 
 body.mode-opening #opening-longpage {
@@ -43,5 +53,5 @@ body:not(.mode-opening) #opening-scroll {
   background: url("assets/page1/bg-page-canvas.png") center top / 100% auto no-repeat;
   background-color: #fff;
   /* 画幅高度随底图比例，保证铜版条与 WIG 落在正确色区 */
-  min-height: 150vw;
+  min-height: 2268px;
 }

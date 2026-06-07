@@ -13,7 +13,7 @@
   z-index: 2;
   /* ↓ 整体位置：改这里的 padding-top 即可上下移动铜版条区域
        clamp(下限, 理想vw, 上限) —— 上限封顶，宽屏上不再撑出大空隙 */
-  padding: clamp(54px, 6.25vw, 90px) 3vw clamp(22px, 2.5vw, 36px);
+  padding: 90px 45.36px 36px;
   margin-top: 0;
 }
 
@@ -24,8 +24,8 @@
   align-items: flex-end;
   /* ↓ 竖条间距。JS 已读取这个值并补进橙色面板定位，所以加间距不会再错位。
        用 vw → 跟宽度一致缩放，任何屏幕比例稳定。想更宽/窄就调这个数。 */
-  gap: 0.9vw;
-  max-width: min(40vw, 1500px);  /* ← 整行最大宽度：改这里 */
+  gap: 13.61px;
+  max-width: 604.8px;  /* ← 整行最大宽度：改这里 */
   margin: 0 auto;
   position: relative;            /* 让面板能相对此容器绝对定位 */
 }
@@ -66,7 +66,7 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: min(51.25vw, 820px);  /* ← 图片最大高度：改这里 */
+  max-height: 774.9px;  /* ← 图片最大高度：改这里 */
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;
@@ -534,7 +534,7 @@
   position: relative;
   z-index: 2;
   /* 上下留白封顶，宽屏上不再撑大 */
-  padding: clamp(96px, 12.5vw, 180px) 5vw clamp(22px, 2.5vw, 36px);
+  padding: 180px 75.6px 36px;
   max-width: 920px;
   margin: 0 auto;
   text-align: center;
@@ -543,8 +543,8 @@
 .wig-parallax-zone {
   position: relative;
   margin: 0 auto 2rem;
-  width: min(94vw, 900px);
-  height: clamp(200px, 20vw, 380px);   /* ← 区域高度：调大让酒杯有空间 */
+  width: 900px;
+  height: 302.4px;   /* ← 区域高度：调大让酒杯有空间 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -559,8 +559,8 @@
   top: 54%;           /* ★ 橙条上下位置：同样用百分比，放心调 */
   /* ↓ 居中公式不变；改 width 可调长度 */
   transform: translate(-50%, -50%);
-  width: min(90vw, 1200px);            /* ← 橙条长度：改这里（vw=屏幕比例，1200px=上限） */
-  height: clamp(52px, 8.5vw, 88px);   /* ← 橙条高度：改这里 */
+  width: 1200px;            /* ← 橙条长度：改这里（vw=屏幕比例，1200px=上限） */
+  height: 88px;   /* ← 橙条高度：改这里 */
   background: #ff7d00;
   border-radius: 1px;
   z-index: 0;
@@ -586,7 +586,7 @@
   left: -8.5%;
   width: 100%;
   height: auto;
-  max-height: clamp(180px, 30vw, 320px);
+  max-height: 320px;
   object-fit: contain;
   object-position: center bottom;
   pointer-events: none;
@@ -631,7 +631,7 @@
   display: block;
   margin: 0 auto 1.0rem;               /* ← 图片与正文间距：改 1.2rem */
   width: auto;
-  max-width: min(88vw, 520px);         /* ← 标题图宽度：改这里 */
+  max-width: 520px;         /* ← 标题图宽度：改这里 */
   height: auto;
   pointer-events: none;
   user-select: none;
@@ -639,7 +639,7 @@
 
 .wig-body {
   margin: 0 auto;                       /* ← 水平居中；改 margin-top 可上下移位 */
-  max-width: min(700vw, 1000px);          /* ← 文字行宽：改这里 */
+  max-width: 1000px;          /* ← 文字行宽：改这里 */
   font-family: Baskerville, "Libre Baskerville", "Times New Roman", Georgia, serif;
   font-size: 14pt;                      /* ← 字号：改这里（原来8pt，越大越大） */
   line-height: 1.5;                    /* ← 行间距：改这里（1.0=紧，2.0=宽松） */
@@ -651,7 +651,7 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: 1.25vw 1.5rem 7.5vw;
+  padding: 18.9px 1.5rem 113.4px;
 }
 
 .btn-enter-game {
@@ -673,7 +673,7 @@
 
 @media (max-width: 640px) {
   .opening-longpage {
-    min-height: 162.5vw;
+    min-height: 2457px;
   }
 
   .strips-row {
@@ -681,10 +681,10 @@
   }
 
   .era-strip {
-    width: clamp(42px, 16.5vw, 68px);
+    width: 68px;
   }
 
   .era-strip img {
-    max-height: 30vw;
+    max-height: 453.6px;
   }
 }

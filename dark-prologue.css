@@ -49,7 +49,7 @@
   bottom: 0;                /* ★ 城市垂直位置 */
   left: 0;
   width: 100%;
-  height: 65vw;             /* ★ 城市可见高度（裁切底部透明区域） */
+  height: 982.8px;             /* ★ 城市可见高度（裁切底部透明区域） */
   overflow: hidden;
   z-index: 4;               /* ★ 城市层级：低于文字(9994)和红线(9991) */
   pointer-events: none;
@@ -87,7 +87,7 @@
   /* ★★ 暗色区总高度 = 这个值。月亮/文案/EnterGame/城市都按它的百分比定位，
      所以改这里 = 整块等比压缩，所有相对间距不变。
      200vw → 160vw 即压缩到 80%（缩小间距）。想更紧凑就再调小。 */
-  height: 180vw;
+  height: 2721.6px;
 }
 
 /* The image itself fills the wrapper width, anchored to its top */
@@ -105,9 +105,10 @@
    Controlled via JS IntersectionObserver (opacity 0/1).
    z-index sits below cocktail bubbles (9999) but above page content.       */
 #dp-stars-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* Plan B：改成暗色区内部的绝对定位星空（随舞台等比缩放，层级正确：
+     在黑底之上、月亮/文字之下）。 */
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 2;
@@ -129,8 +130,8 @@
   top: 25%;          /* ★ 红月上下位置（调大=下移，靠近文案，缩小月↔字距离） */
   /* ★ Plan B：月亮尺寸改成纯 vw，跟暗色区一起等比缩放（原 clamp 会在宽屏被封顶=不一致）。
      21.5vw ≈ 你 1440 屏上原本的 310px。 */
-  width:  21.5vw;
-  height: 21.5vw;
+  width:  325.08px;
+  height: 325.08px;
   border-radius: 50%;
   background: #dd022b;
   box-shadow:
@@ -156,7 +157,7 @@
   position: absolute;
   left: -20%;
   top: 2%;           /* ★ vertical position */
-  width: clamp(1120px, 90vw, 2480px);   /* ★ width */
+  width: 1360.8px;   /* ★ width */
   height: auto;
   /* z-index ABOVE the cocktail-bubble canvas (9999) so bubbles vanish
      behind the clouds at the light→dark boundary.                      */
@@ -173,7 +174,7 @@
   position: absolute;
   right: -20%;
   top: 4%;           /* ★ vertical position */
-  width: clamp(860px,90vw, 2100px);   /* ★ width */
+  width: 1360.8px;   /* ★ width */
   height: auto;
   z-index: 10000;
   pointer-events: auto;
@@ -206,7 +207,7 @@
   font-weight: 500;
   /* ★ Plan B：字号改成跟屏幕宽度走（vw），与暗色区其他元素同步缩放，
      任何屏幕上排版一致。1.48vw ≈ 你 1440 屏上的原 16pt。 */
-  font-size: 1.48vw;
+  font-size: 22.38px;
   line-height: 2.0;
   opacity: 0;
   transform: translateY(8px);
@@ -271,7 +272,7 @@
 
 #btn-enter-game2 img {
   display: block;
-  width: 18vw;           /* ★ 按钮图片宽度 */
+  width: 272.16px;           /* ★ 按钮图片宽度 */
   height: auto;
   /* 白色背景在黑底上消失，橙色文字保留 */
   mix-blend-mode: screen;
@@ -336,7 +337,7 @@
      减小这个值 → 裁掉更多底部空白。
      增大这个值 → 显示更多图片。
      109vw = 完整显示，不裁切。                          */
-  height: 70vw;
+  height: 1058.4px;
 }
 
 #site-city-img {
