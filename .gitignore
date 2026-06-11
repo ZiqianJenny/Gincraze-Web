@@ -10,3 +10,6 @@ _css_backup_before_lock/
 
 _planB_backup/
 _stage_backup/
+
+# 设计源文件（35MB+），不进仓库
+assets/Page 2/Location Window.svg
