@@ -2272,10 +2272,18 @@ This is how it all ends.` },
         requestAnimationFrame(function(){
           requestAnimationFrame(function(){ covL.style.width='50%'; covR.style.width='50%'; });
         });
-        covR.addEventListener('transitionend', function once(){
-          covR.removeEventListener('transitionend', once);
+        /* 揭示 iframe —— 幂等，多重触发，任一生效即可。
+           只靠 transitionend 不可靠：某些机器/浏览器会合并两帧 width 变化、
+           跳过动画或不派发该事件 → iframe 永远停在 opacity:0 = 卡在红条上。
+           因此再加 定时器兜底 + iframe onload 兜底，保证内容一定出现。 */
+        var _revealed = false;
+        function revealFrame(){
+          if (_revealed) return; _revealed = true;
           frame.style.opacity = '1'; frame.style.pointerEvents = 'auto';
-        }, {once:true});
+        }
+        covR.addEventListener('transitionend', revealFrame, {once:true});
+        setTimeout(revealFrame, 700);          /* 兜底：动画约 420ms，留余量 */
+        frame.addEventListener('load', function(){ setTimeout(revealFrame, 450); });
 
         /* ── Close: content out → red covers → covers slide out ─────── */
         var _closing = false;
